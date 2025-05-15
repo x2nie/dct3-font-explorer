@@ -160,7 +160,7 @@ function ppmodify_fonts_dump ( data: Uint8Array, offset: number, entries:number 
 
 function _mem2str(data:Uint8Array, offset:number, length:number): string {
 	const part = data.slice(offset, offset + length)
-	return new TextDecoder('utf-8').decode(part)
+	return new TextDecoder('utf-8').decode(part).replace(/\x00/gm,'')
 }
 
 export function ppmodify_dump_font_subchunk ( data: Uint8Array, offset: number ): t_font[] //unsigned int
