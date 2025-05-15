@@ -21,6 +21,9 @@ export function locateFontChunk(data: Uint8Array): number {
                 console.log('found at', z.toString(16))
                 return z
             }
+            else {
+                z++;
+            }
         }
         else break;
     }
