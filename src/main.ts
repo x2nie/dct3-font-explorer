@@ -1,24 +1,27 @@
-import './style.css'
-import typescriptLogo from './typescript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.ts'
+import './style.scss'
+import { loadFile, mount, reactive, whenReady } from '@odoo/owl'
+import App from './App'
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`
+whenReady(async function () {
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+  const [templates, cpp_content] = await Promise.all([
+    loadFile("templates.xml"),
+
+    loadFile("examples/dev5-edt-text.cpp"),
+  ])
+
+  const env = {
+    doc: reactive({
+          fonts: [], 
+          })
+  }
+
+  mount(App, document.body, { 
+      env, 
+      templates, 
+      // 'debug': true,
+      //props: {...}, templates: "..."}
+  });
+  
+})
+
