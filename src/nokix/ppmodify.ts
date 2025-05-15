@@ -11,7 +11,7 @@ export const MAX_GLYPH_COUNT       =  0x10;
 export const MAX_GLYPH_LENGTH      =  0x40000;
 
 // glyph struct
-type t_font_glyph =
+export type t_font_glyph =
 {
 	width: number;  //unsigned int        // max. 20
 	bitlen: number; //unsigned int        // ( ( end - start + 1 ) * height + 7 ) & ~7

@@ -1,5 +1,5 @@
-import { GET_BYTE, GET_HALF, GET_WORD } from "./defines";
-import { FONT_CMAP_SIZE, FONT_GLYPH_SIZE, FONT_HEADER_SIZE, FONT_TRAC_SIZE, type t_font, type t_font_cmap, type t_font_trac } from "./ppmodify";
+import { ALIGN8, GET_BYTE, GET_HALF, GET_WORD } from "./defines";
+import { FONT_CMAP_SIZE, FONT_GLYPH_SIZE, FONT_HEADER_SIZE, FONT_TRAC_SIZE, type t_font, type t_font_cmap, type t_font_glyph, type t_font_trac } from "./ppmodify";
 
 
 /*
@@ -26,18 +26,20 @@ function ppmodify_font_trac_dump ( data:Uint8Array, pos:number, entries: number 
 	LIST_REWND ( trac );
 	return trac;
 }
-
-function ppmodify_font_cmap_glyph_dump ( data:Uint8Array, pos: number, t_font_cmap *cmap ) //unsigned int
+*/
+function ppmodify_font_cmap_glyph_dump ( data:Uint8Array, pos: number, cmap: t_font_cmap ) //unsigned int
 {
-	char *dst;
-	unsigned int src, dstbit, srcbit, x, offset, bitlen;
+	// char *dst;
+	let dst:number[];
+	let src, dstbit, srcbit, x, offset, bitlen, dst_i;
 
 
 	if ( !data || !cmap )
-		return RXE_FAIL;
+		return null;
 
 	pos += cmap.gid * FONT_GLYPH_SIZE;
 
+	cmap.glyph = {bdt: {}} as t_font_glyph;
 	cmap.glyph.width  = GET_HALF ( data, pos + 6 );
 	cmap.glyph.bitlen = ( cmap.end - cmap.start + 1 ) * cmap.height;
 
@@ -47,44 +49,62 @@ function ppmodify_font_cmap_glyph_dump ( data:Uint8Array, pos: number, t_font_cm
 
 	src = pos + GET_WORD ( data, pos ) + cmap.glyph.width * ( cmap.offset >> 3 );
 	dst = cmap.glyph.bdt.buffer;
+	dst_i = 0;
 	dstbit = 0;
 	srcbit = cmap.offset;
 
 	while ( dstbit < cmap.glyph.bitlen )
 	{
 		if ( dstbit && !( dstbit & 7 ) )
-			dst += cmap.glyph.width;
+			dst_i += cmap.glyph.width;
 		if ( ( srcbit - cmap.offset ) && !( srcbit & 7 ) )
 			src += cmap.glyph.width;
 
 		x = 0;
 		while ( x < cmap.glyph.width )
 		{
-			bitcpy ( dst + x, dstbit & 7, GET_BYTE ( data, src + x ), srcbit & 7 );
+			bitcpy ( dst, dst_i + x, dstbit & 7, GET_BYTE ( data, src + x ), srcbit & 7 );
 			x++;
 		}
 		dstbit++;
 		srcbit++;
 	}
 
-	cmap.gid = RXE_FAIL;
+	cmap.gid = -1; //RXE_FAIL;
 	cmap.offset = 0;
 
-	return RXE_OK;
+	return 1;//RXE_OK;
+}
+
+function nokix_malloc(n:number): number[]{
+	const res = []
+	for (let i = 0; i < n; i++) {
+		res.push(0)
+	}
+	return res
+}
+
+// void bitcpy ( unsigned char *dst, unsigned char dstbit, const unsigned char src, unsigned char srcbit )
+function bitcpy ( dst:number[], offset:number, dstbit:number, src:number, srcbit:number )
+{
+	if ( src & ( 1 << srcbit ) )
+		dst[offset] |=  ( 1 << dstbit );
+	else
+		dst[offset] &= ~( 1 << dstbit );
 }
 
 function ppmodify_font_cmap_dump ( data:Uint8Array, pos: number, entries: number, glyph_pos:number ): t_font_cmap[]
 {
-	t_font_cmap *cmap = NULL;
-	unsigned int v, gid;
+	const cmaps:t_font_cmap[] = [];
+	let v;
 
 
 	if ( !data )
-		return NULL;
+		return [];
 
 	while ( entries-- )
 	{
-		cmap = LIST_NEW ( cmap, t_font_cmap );
+		const cmap = {} as t_font_cmap;
 
 		cmap.start = GET_HALF ( data, pos + 0 );
 		cmap.end   = GET_HALF ( data, pos + 2 );
@@ -98,13 +118,14 @@ function ppmodify_font_cmap_dump ( data:Uint8Array, pos: number, entries: number
 		// now look for corresponding glyph and get it
 		ppmodify_font_cmap_glyph_dump ( data, glyph_pos, cmap );
 
+		cmaps.push(cmap)
+
 		pos += FONT_CMAP_SIZE;
 	}
 
-	LIST_REWND ( cmap );
-	return cmap;
+	return cmaps;
 }
-*/
+
 
 function ppmodify_fonts_dump ( data: Uint8Array, offset: number, entries:number ): t_font[]
 {
@@ -146,7 +167,7 @@ function ppmodify_fonts_dump ( data: Uint8Array, offset: number, entries:number 
 		font.weight  = _mem2str(data, pos + 0x23,  6 );
 
 		// font.trac = ppmodify_font_trac_dump ( data, pos + traco, trac_len );
-		// font.cmap = ppmodify_font_cmap_dump ( data, pos + cmapo, cmap_len, pos + glypho );
+		font.cmap = ppmodify_font_cmap_dump ( data, pos + cmapo, cmap_len, pos + glypho );
 
 		pos += FONT_HEADER_SIZE;
 
