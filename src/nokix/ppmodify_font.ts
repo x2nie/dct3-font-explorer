@@ -2,31 +2,32 @@ import { ALIGN8, GET_BYTE, GET_HALF, GET_WORD } from "./defines";
 import { FONT_CMAP_SIZE, FONT_GLYPH_SIZE, FONT_HEADER_SIZE, FONT_TRAC_SIZE, type t_font, type t_font_cmap, type t_font_glyph, type t_font_trac } from "./ppmodify";
 
 
-/*
+
 function ppmodify_font_trac_dump ( data:Uint8Array, pos:number, entries: number ): t_font_trac[]
 {
-	t_font_trac *trac = NULL;
+	const tracs:t_font_trac[] = [];
 
 
 	if ( !data )
-		return NULL;
+		return [];
 
 	while ( entries-- )
 	{
-		trac = LIST_NEW ( trac, t_font_trac );
+		const trac = {} as t_font_trac;
 
 		trac.start = GET_HALF ( data, pos + 0 );
 		trac.end   = GET_HALF ( data, pos + 2 );
 		trac.left  = GET_BYTE ( data, pos + 4 );
 		trac.right = GET_BYTE ( data, pos + 5 );
 
+		tracs.push(trac)
+
 		pos += FONT_TRAC_SIZE;
 	}
 
-	LIST_REWND ( trac );
-	return trac;
+	return tracs;
 }
-*/
+
 function ppmodify_font_cmap_glyph_dump ( data:Uint8Array, pos: number, cmap: t_font_cmap ) //unsigned int
 {
 	// char *dst;
@@ -166,7 +167,7 @@ function ppmodify_fonts_dump ( data: Uint8Array, offset: number, entries:number 
 		font.size    = _mem2str(data, pos + 0x18, 11 );
 		font.weight  = _mem2str(data, pos + 0x23,  6 );
 
-		// font.trac = ppmodify_font_trac_dump ( data, pos + traco, trac_len );
+		font.trac = ppmodify_font_trac_dump ( data, pos + traco, trac_len );
 		font.cmap = ppmodify_font_cmap_dump ( data, pos + cmapo, cmap_len, pos + glypho );
 
 		pos += FONT_HEADER_SIZE;
