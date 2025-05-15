@@ -1,5 +1,6 @@
 import { Component } from "@odoo/owl";
 import { locateFontChunk } from "./chunkFinder";
+import { ppmodify_dump_font_subchunk } from "../nokix/ppmodify_font";
 
 export class DropZone extends Component{
     static template = "DropZone";
@@ -30,6 +31,8 @@ export class DropZone extends Component{
                     const sliced = raw.slice(startIndex);
                     console.log("Sliced data from 'FONTfconv':", startIndex);
                     // Lanjutkan pemrosesan sliced...
+                    const fonts = ppmodify_dump_font_subchunk(sliced, 0 +28)
+                    console.log(fonts)
                 } else {
                     console.error("Marker 'FONTfconv' not found in file.");
                 }
