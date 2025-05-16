@@ -71,7 +71,7 @@ function ppmodify_font_cmap_glyph_dump ( data:Uint8Array, pos: number, cmap: t_f
 		srcbit++;
 	}
 
-	cmap.gid = -1; //RXE_FAIL;
+	// cmap.gid = -1; //RXE_FAIL;
 	cmap.offset = 0;
 
 	return 1;//RXE_OK;

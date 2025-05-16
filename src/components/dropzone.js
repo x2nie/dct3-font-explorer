@@ -1,13 +1,16 @@
-import { Component } from "@odoo/owl";
+import { Component, useEnv } from "@odoo/owl";
 import { locateFontChunk } from "./chunkFinder";
 import { ppmodify_dump_font_subchunk } from "../nokix/ppmodify_font";
 
 export class DropZone extends Component{
     static template = "DropZone";
+    setup(){
+        this.env = useEnv()
+    }
 
     onDragOver(ev){
         ev.preventDefault()
-        console.log(ev.offsetX, ev.offsetY)
+        // console.log(ev.offsetX, ev.offsetY)
     }
     onDropFile(ev){
         ev.preventDefault ();
@@ -33,12 +36,14 @@ export class DropZone extends Component{
                     // Lanjutkan pemrosesan sliced...
                     const fonts = ppmodify_dump_font_subchunk(sliced, 0 +28)
                     console.log(fonts)
+                    this.env.doc.fonts = fonts
                 } else {
                     console.error("Marker 'FONTfconv' not found in file.");
                 }
 			};
 		
 			reader.readAsArrayBuffer (file);
+            break; //accept only first file.
 		}
     }
 }

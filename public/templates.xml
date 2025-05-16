@@ -1,6 +1,7 @@
 <template>
 
     <div t-name="App" class="app">
+        <FontExplorer/>
         <DropZone/>
     </div>
 
@@ -10,4 +11,33 @@
     >
 
     </div>
+
+
+<div t-name="FontExplorer" class="font-explorer">
+    <t t-foreach="doc.fonts" t-as="font" t-key="font_index">
+        <!-- <t t-call="font"></t> -->
+         <Font font="font"/>
+    </t>
+</div>    
+
+    <div t-name="Font" class="font-enum" >
+        <div t-out="font.size + ' ' + font.weight" t-on-click="onClick"/>
+        <t t-if="state.open">
+            <t t-foreach="font.cmap" t-as="cmap" t-key="cmap_index">
+                <CharGroup cmap="cmap"/>
+            </t>
+        </t>
+    </div>
+
+
+    <div t-name="CharGroup" class="font-group">
+        <div t-out="cmap.start + ' ~ ' + cmap.end" t-on-click="onClick"/>
+        <div t-ref="root"/>
+        <t t-if="state.open">
+            <canvas t-ref="whole" t-att="{width: cmap.glyph.width, height: cmap.height * (cmap.end - cmap.start + 1)}" />
+        </t>
+    </div>
+
+
+
 </template>
