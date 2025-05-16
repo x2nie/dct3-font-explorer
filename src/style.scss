@@ -74,6 +74,10 @@ h1 {
   .btn {
     user-select: none;
     cursor: pointer;
+    position: sticky;
+    top: 0px;
+    background: white;
+    z-index: 1;
   }
 
   .font-enum{
@@ -85,7 +89,13 @@ h1 {
   --scale: 8;
   --cwidth: 8px;
   --cheight: 8px;
+  --baseline: 10;
   padding-left: 10px;
+
+  .btn {
+    top: 2rem;
+  }
+
   canvas {
     display: block;
     transform: scale(var(--scale));
@@ -101,7 +111,9 @@ h1 {
     box-sizing: content-box;
     width: calc(var(--scale) * var(--cwidth));
     height: calc(var(--scale) * var(--cheight));
-    background: repeating-linear-gradient(0deg, transparent, transparent calc(var(--scale) * 1px - 1px), gray calc(var(--scale) * 1px)), 
+    background: 
+      linear-gradient(180deg, transparent, transparent calc(var(--scale) * (var(--baseline) + 1) * 1px + 0px), red calc(var(--scale) * (var(--baseline) + 1) * 1px + 1px), transparent calc(var(--scale) * var(--baseline) * 1px + 2px)),
+      repeating-linear-gradient(0deg, transparent, transparent calc(var(--scale) * 1px - 1px), gray calc(var(--scale) * 1px)), 
       repeating-linear-gradient(90deg, transparent, transparent calc(var(--scale) * 1px - 1px), gray calc(var(--scale) * 1px + 0px));
   }
 }

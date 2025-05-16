@@ -1,7 +1,9 @@
 const fontChunkFind: number[] = [0x46, 0x4F, 0x4E, 0x54, 0x66, 0x63, 0x6F, 0x6E, 0x76];
 
 export function locateFontChunk(data: Uint8Array): number {
-    let z = 0x0130410;
+    // let z = 0x0130410;
+    // let z = 0x00f0000;
+    let z = 0;
     let x = 0;
 
     while(z < data.length){

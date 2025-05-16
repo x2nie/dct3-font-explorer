@@ -32,19 +32,19 @@ export class CharGroup extends Component{   //?glyps, share same width
         useSubEnv(this.graphic)
         this.canvas = null; //? private
         this.canvasRef = useRef('whole')
-        this.container = useRef('root')
-        useEffect(
-            (open, canvas)=>{
-                if(open && this.canvas==null)
-                    this.buildCanvas();
+        // this.container = useRef('root')
+        // useEffect(
+        //     (open, canvas)=>{
+        //         if(open && this.canvas==null)
+        //             this.buildCanvas();
                 
-                // if(canvas!=null){
-                //     debugger
-                //     this.container.el.appendChild(this.canvas)
-                // }
-            },
-            ()=>[this.state.open, this.canvas]
-        )
+        //         // if(canvas!=null){
+        //         //     debugger
+        //         //     this.container.el.appendChild(this.canvas)
+        //         // }
+        //     },
+        //     ()=>[this.state.open, this.canvas]
+        // )
         useEffect(
             (canvas, img)=>{
                 if(canvas && img!==null){

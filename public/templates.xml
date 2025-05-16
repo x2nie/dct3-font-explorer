@@ -1,8 +1,8 @@
 <template>
 
     <div t-name="App" class="app">
-        <FontExplorer/>
         <DropZone/>
+        <FontExplorer/>
     </div>
 
     <div t-name="DropZone" class="drop-zone"
@@ -30,9 +30,9 @@
     </div>
 
 
-    <div t-name="CharGroup" class="font-group" t-attf-style="--cheight:#{cmap.height}px; --cwidth:#{cmap.glyph.width}px">
+    <div t-name="CharGroup" class="font-group" t-attf-style="--cheight:#{cmap.height}px; --cwidth:#{cmap.glyph.width}px; --baseline:#{cmap.base_line}">
         <div t-out="cmap.start + ' ~ ' + cmap.end" t-on-click="onClick" class="btn"/>
-        <div t-ref="root"/>
+        <!-- <div t-ref="root"/> -->
         <div t-if="state.open">
             <!-- <canvas t-ref="whole" t-att="{width: cmap.glyph.width, height: cmap.height * (cmap.end - cmap.start + 1)}" /> -->
             <t t-foreach="glyphs()" t-as="glyph" t-key="glyph_index">
