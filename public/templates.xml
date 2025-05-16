@@ -21,7 +21,7 @@
 </div>    
 
     <div t-name="Font" class="font-enum" >
-        <div t-out="font.size + ' ' + font.weight" t-on-click="onClick"/>
+        <div t-out="font.size + ' ' + font.weight" t-on-click="onClick" class="btn"/>
         <t t-if="state.open">
             <t t-foreach="font.cmap" t-as="cmap" t-key="cmap_index">
                 <CharGroup cmap="cmap"/>
@@ -30,12 +30,20 @@
     </div>
 
 
-    <div t-name="CharGroup" class="font-group">
-        <div t-out="cmap.start + ' ~ ' + cmap.end" t-on-click="onClick"/>
+    <div t-name="CharGroup" class="font-group" t-attf-style="--cheight:#{cmap.height}px; --cwidth:#{cmap.glyph.width}px">
+        <div t-out="cmap.start + ' ~ ' + cmap.end" t-on-click="onClick" class="btn"/>
         <div t-ref="root"/>
-        <t t-if="state.open">
-            <canvas t-ref="whole" t-att="{width: cmap.glyph.width, height: cmap.height * (cmap.end - cmap.start + 1)}" />
-        </t>
+        <div t-if="state.open">
+            <!-- <canvas t-ref="whole" t-att="{width: cmap.glyph.width, height: cmap.height * (cmap.end - cmap.start + 1)}" /> -->
+            <t t-foreach="glyphs()" t-as="glyph" t-key="glyph_index">
+                <Glyph index="glyph" height="cmap.height" width="cmap.glyph.width" plane="canvas"/>
+            </t>
+        </div>
+    </div>
+
+
+    <div t-name="Glyph" class="font-glyph">
+        <canvas t-ref="canvas" t-att="{width: props.width, height: props.height}" />
     </div>
 
 

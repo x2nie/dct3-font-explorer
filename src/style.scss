@@ -69,3 +69,39 @@ h1 {
     content: 'drop DCT3 file here'
   }
 }
+
+.font-explorer{
+  .btn {
+    user-select: none;
+    cursor: pointer;
+  }
+
+  .font-enum{
+    padding-left: 10px;
+  }
+}
+
+.font-group{
+  --scale: 8;
+  --cwidth: 8px;
+  --cheight: 8px;
+  padding-left: 10px;
+  canvas {
+    display: block;
+    transform: scale(var(--scale));
+    transform-origin: top left;
+    margin-right: 50px;
+    image-rendering: pixelated;
+  }
+
+  .font-glyph{
+    display: inline-block;
+    margin-right: calc(var(--scale) * 1px);
+    // border: 1px solid blue;
+    box-sizing: content-box;
+    width: calc(var(--scale) * var(--cwidth));
+    height: calc(var(--scale) * var(--cheight));
+    background: repeating-linear-gradient(0deg, transparent, transparent calc(var(--scale) * 1px - 1px), gray calc(var(--scale) * 1px)), 
+      repeating-linear-gradient(90deg, transparent, transparent calc(var(--scale) * 1px - 1px), gray calc(var(--scale) * 1px + 0px));
+  }
+}

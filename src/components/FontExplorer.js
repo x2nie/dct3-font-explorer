@@ -28,8 +28,8 @@ export class CharGroup extends Component{   //?glyps, share same width
     static template = "CharGroup"
     setup(){
         this.state = useState({open: false})
-        const graphic = useState({canvas:null})
-        useSubEnv(graphic)
+        this.graphic = useState({canvas:null})
+        useSubEnv(this.graphic)
         this.canvas = null; //? private
         this.canvasRef = useRef('whole')
         this.container = useRef('root')
@@ -38,10 +38,10 @@ export class CharGroup extends Component{   //?glyps, share same width
                 if(open && this.canvas==null)
                     this.buildCanvas();
                 
-                if(canvas!=null){
-                    debugger
-                    this.container.el.appendChild(this.canvas)
-                }
+                // if(canvas!=null){
+                //     debugger
+                //     this.container.el.appendChild(this.canvas)
+                // }
             },
             ()=>[this.state.open, this.canvas]
         )
@@ -58,7 +58,15 @@ export class CharGroup extends Component{   //?glyps, share same width
     get cmap(){
         return this.props.cmap
     }
+    glyphs() {
+        const glyphs=[]
+        for (let i = 0; i < this.cmap.end - this.cmap.start + 1; i++) {
+            glyphs.push(i);
+        }
+        return glyphs
+    }
     onClick(){
+        if(this.canvas==null) this.buildCanvas();
         this.state.open = !this.state.open;
     }
     buildCanvas(){
@@ -72,16 +80,16 @@ export class CharGroup extends Component{   //?glyps, share same width
         let z = 0;
         // let x = 0;
         let h = 0;
-        while(z < this.cmap.glyph.bitlen){
+        while(z < this.cmap.glyph.bdt.length){
             for (let x = 0; x < canvas.width; x++) {
                 const byte = this.cmap.glyph.bdt.buffer[z++];
                 for (let y = 0; y < 8; y++) {
                     const bit = (byte >> y) & 1;
                     if(bit){
-                        // ctx.fillRect(x,y+h,1,1)
+                        ctx.fillRect(x,y+h,1,1)
                     }
-                    ctx.fillStyle = bit? 'black' : 'lime'
-                    ctx.fillRect(x,y+h,1,1)
+                    // ctx.fillStyle = bit? 'black' : 'lime'
+                    // ctx.fillRect(x,y+h,1,1)
                 }
             }
             h += 8
@@ -89,16 +97,31 @@ export class CharGroup extends Component{   //?glyps, share same width
             // z++;
         }
         this.canvas = canvas
+        this.graphic.canvas = canvas;
     }
 }
 
 export class Glyph extends Component{
     static template = "Glyph"
     setup(){
-        this.state = useState({open: false})
+        this.env = useEnv()
+        // this.state = useState({open: false})
+        this.canvasRef = useRef('canvas')
+        useEffect(
+            (canvas, img)=>{
+                const {index, height} = this.props
+                if(canvas && img!==null){
+                    const ctx = canvas.getContext('2d')
+                    // ctx.drawImage(img,0,height * index)
+                    ctx.drawImage(img,0,-1 * height * index)
+                }
+            },
+            ()=>[this.canvasRef.el, this.props.plane]
+        )
     }
 }
 
 
 FontExplorer.components = {Font}
 Font.components = {CharGroup}
+CharGroup.components = {Glyph}
